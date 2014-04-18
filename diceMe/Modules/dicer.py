@@ -95,9 +95,9 @@ def relaunch(dice,args):
 	def relaunch_fn(table):
 		for i in xrange(int(args[0])):
 			table.sort()
-			print "B",table
+			#print "B",table
 			table[0]=dice.throw_one()
-			print "A",table
+			#print "A",table
 	dice.add_post_function(relaunch_fn)
 
 def crit(dice,args):

@@ -52,7 +52,7 @@ def main():
 	# Parsing imput
 	text=raw_input('')
 	command=pattern_recognition.parse_imput(text)
-	print command
+	#print command
 	if command[0]=="?": print help_text
 	if command[0]=="quit" or command[0]=="q": sys.exit()
 	# Creating dice
