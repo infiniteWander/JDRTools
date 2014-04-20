@@ -94,7 +94,7 @@ def odd(dice,args):
 
 def relaunch(dice,args):
 	if len(args)<2:
-		args.append(1) # Will relaunch everything under 0 (all)
+		args.append(dice.sides+1) # Will relaunch everything under 0 (all)
 	args[0]=int(args[0])
 	args[1]=int(args[1])
 	
@@ -134,6 +134,18 @@ def show_table(dice,arg):
 		print "("+dice.name+")",table, sum(table)
 	dice.add_post_function(show_fn)
 
+def threshold(dice,args):
+	th=int(args[0])
+	def threshold_fn(table):
+		size,i=len(table),0
+		while i < size:
+			if table[i]<th:
+				table.pop(i)
+				size-=1
+			else:
+				i+=1
+		#table=[i for i in table if i>=th]
+	dice.add_post_function(threshold_fn)
 	
 dictfn={">":upper_than,
 		"<":lower_than,
@@ -141,7 +153,8 @@ dictfn={">":upper_than,
 		'!':crit,
 		's':show_table,#Debug purpose
 		'++':add_to_all,
-		'+':add_to_sum}
+		'+':add_to_sum,
+		'/':threshold}
 
 def witch_fn(dice,fn,args):
 	try:

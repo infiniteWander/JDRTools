@@ -25,21 +25,21 @@
 import Modules,sys,os
 from Modules import *
 
-help_text="""  {show|sum|mean|} [XdX (commands)*]*
+help_text="""  {show|sum|mean|} [XdY (commands)*]*
   Info:
     show        Show the results individually
     sum         Sum the results individually
     mean        Give the average of the results
     ----
-    XdX         Throw X dices with X faces
+    XdY         Throw X dices with Y faces
     ----
-    commands    Give specific parameters to the dice generator)
+    commands    Give specific parameters to the dice generator
       (> X)     Give only results upper than X
       (< X)     Give only results lower than X
-      (x X)     Add X to each result (small capital x)
-      (* X [Y]) Will relaunch X results, if under Y (if not specified, it will relaunch X results) 
-      (+ X)     Add one X to the pool of results (For a sum its like adding X)
+      (* X [Y]) Will relaunch up to X times results lower than Y (if not specified, it will relaunch the X lowest results) 
+      (+ X)     Add one X to the pool of results (for a sum it equals to adding X)
       (++ X)    Add X to all results
+      (/ X)     Set a threshold of X (only results above X will be used)
       - Debug -
       (s)       Show the list of dice results at this point of the functions
 """
