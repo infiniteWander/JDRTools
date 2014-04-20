@@ -25,9 +25,7 @@
 import Modules,sys,os
 from Modules import *
 
-help_text="""Usage ./diceMe.py [PATTERN]
-PATTERN:
-  {show|sum|mean|} [XdX (commands)*]*
+help_text="""  {show|sum|mean|} [XdX (commands)*]*
   Info:
     show        Show the results individually
     sum         Sum the results individually
@@ -37,24 +35,18 @@ PATTERN:
     ----
     commands    Give specific parameters to the dice generator)
       (> X)     Give only results upper than X
-      (< X)     Give only results upper than X
-      (+ X)     Add X to each result
-EXAMPLES:
-
+      (< X)     Give only results lower than X
+      (x X)     Add X to each result (small capital x)
+      (* X [Y]) Will relaunch X results, if under Y (if not specified, it will relaunch X results) 
+      (+ X)     Add one X to the pool of results (For a sum its like adding X)
+      (++ X)    Add X to all results
+      - Debug -
+      (s)       Show the list of dice results at this point of the functions
 """
 
-def main():
-	"Main pattern recognition dice thrower routine"
-
-	sys.stdout.write("diceMe > ")
-	sys.stdout.flush()
-	
-	# Parsing imput
-	text=raw_input('')
+def diceRoutine(text):
 	command=pattern_recognition.parse_imput(text)
-	#print command
-	if command[0]=="?": print help_text
-	if command[0]=="quit" or command[0]=="q": sys.exit()
+	if command[0]=="help" or command[0]=="h": print help_text
 	# Creating dice
 	finalfn=dicer.witch_res(command[0])
 	for dice in xrange(1,len(command),2):
@@ -63,17 +55,31 @@ def main():
 		listfn=command[dice+1]
 		nb,sides=txtdice.split("d")
 		nb,sides=int(nb),int(sides)
+		
 		#Creating
-		thrower=dicer.Dice(nb,sides)
+		thrower=dicer.Dice(nb,sides,finalfn)
 		for fn in listfn:
 			funct,args=pattern_recognition.parse_function(fn)
 			dicer.witch_fn(thrower,funct,args)
 		# Throw it
 		res=thrower.throw()
-		# Show result
 		print txtdice,":", finalfn(res)
+
+def main():
+	"Main pattern recognition dice thrower routine"
+	if len(sys.argv)>1: 
+		diceRoutine(sys.argv[1])
+		sys.exit()
+		
+	sys.stdout.write("diceMe > ")
+	sys.stdout.flush()
 	
-	return 0
+	# Parsing imput
+	text=raw_input('')
+	diceRoutine(text)
+	#print command
+	if command[0]=="?": print help_text
+	if command[0]=="quit" or command[0]=="q": sys.exit()
 
 if __name__ == '__main__':
 	while 1:

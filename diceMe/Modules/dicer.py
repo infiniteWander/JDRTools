@@ -31,16 +31,17 @@ from random import *
 
 class Dice(object):
 	"A dice, with number of sides, pretty name and stuff"
-	def __init__(self,number,sides):
+	def __init__(self,number,sides,finalfn):
 		self.number=number
 		self.sides=sides
 		self.lower=1
 		self.upper=sides
-		self.name="d{}".format(sides)
+		self.name="{}d{}".format(number,sides)
 		self.longname=self.name
 		self.post_functions=[]
 		self.dice_functions=[]
 		self.thrower=randint
+		self.finalfn=finalfn
 		self.results=[]
 	
 	def add_post_function(self,fnct):
@@ -92,12 +93,18 @@ def odd(dice,args):
 	dice.add_dice_function(lambda x:x%2+1)
 
 def relaunch(dice,args):
+	if len(args)<2:
+		args.append(1) # Will relaunch everything under 0 (all)
+	args[0]=int(args[0])
+	args[1]=int(args[1])
+	
 	def relaunch_fn(table):
-		for i in xrange(int(args[0])):
+		for i in xrange(args[0]):
 			table.sort()
-			#print "B",table
-			table[0]=dice.throw_one()
-			#print "A",table
+			#print "Before",table
+			if table[0]<args[1]:
+				table[0]=dice.throw_one()
+			#print "After",table
 	dice.add_post_function(relaunch_fn)
 
 def crit(dice,args):
@@ -110,7 +117,32 @@ def crit(dice,args):
 			table[i]*=2
 	dice.add_post_function(crit_fn)
 
-dictfn={">":upper_than,"<":lower_than,"*":relaunch,'!':crit}
+def add_to_all(dice,args):
+	def add_to_all_fn(table):
+		for i in xrange(len(table)):
+			table[i]+=int(args[0])
+	dice.add_post_function(add_to_all_fn)
+
+def add_to_sum(dice,args):
+	#if dice.finalfn!=r_sum: return
+	def add_to_sum_fn(table):
+		table.append(int(args[0]))
+	dice.add_post_function(add_to_sum_fn)
+
+def show_table(dice,arg):
+	def show_fn(table):
+		print "("+dice.name+")",table, sum(table)
+	dice.add_post_function(show_fn)
+
+	
+dictfn={">":upper_than,
+		"<":lower_than,
+		"*":relaunch,
+		'!':crit,
+		's':show_table,#Debug purpose
+		'++':add_to_all,
+		'+':add_to_sum}
+
 def witch_fn(dice,fn,args):
 	try:
 		dictfn[fn](dice,args)
