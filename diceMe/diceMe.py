@@ -70,7 +70,7 @@ def diceRoutine(text):
 
 def main():
 	"Main pattern recognition dice thrower routine"
-	sys.stdout.write("diceMe > ")
+	sys.stdout.write("diceMe >> ")
 	sys.stdout.flush()
 	
 	# Parsing imput
