@@ -64,24 +64,24 @@ def diceRoutine(text):
 		# Throw it
 		res=thrower.throw()
 		print txtdice,":", finalfn(res)
+	#print command
+	if command[0]=="?": print help_text
+	if command[0]=="quit" or command[0]=="q": sys.exit()
 
 def main():
 	"Main pattern recognition dice thrower routine"
-	if len(sys.argv)>1: 
-		diceRoutine(sys.argv[1])
-		sys.exit()
-		
 	sys.stdout.write("diceMe > ")
 	sys.stdout.flush()
 	
 	# Parsing imput
 	text=raw_input('')
 	diceRoutine(text)
-	#print command
-	if command[0]=="?": print help_text
-	if command[0]=="quit" or command[0]=="q": sys.exit()
+	
 
 if __name__ == '__main__':
+	if len(sys.argv)>1: 
+		diceRoutine(sys.argv[1])
+		sys.exit()
 	while 1:
 		try:
 			main()

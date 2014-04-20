@@ -25,7 +25,7 @@ import re
 
 
 function=	"(?P<function>"	+ "show |sum |avg |mean |" 	+ ")"
-dice=		"(?P<dice>" 		+ "[1-9]\d*[dD][1-9]\d*" + ")"
+dice=		"(?P<dice>" 		+ "[1-9]\d*d[1-9]\d*" + ")"
 subcommand=	"(\([^(]*\))"
 
 
