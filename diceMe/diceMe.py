@@ -28,7 +28,7 @@ from Modules import *
 help_text="""  {show|sum|mean|} [XdY (commands)*]*
   Info:
     show        Show the results individually
-    sum         Sum the results individually
+    sum         Sum all the results altogether
     mean        Give the average of the results
     ----
     XdY         Throw X dices with Y faces
@@ -37,9 +37,10 @@ help_text="""  {show|sum|mean|} [XdY (commands)*]*
       (> X)     Give only results upper than X
       (< X)     Give only results lower than X
       (* X [Y]) Will relaunch up to X times results lower than Y (if not specified, it will relaunch the X lowest results) 
-      (+ X)     Add one X to the pool of results (for a sum it equals to adding X)
+      (+ X)     Add one X to the pool of results (for a sum it is the same as adding X)
       (++ X)    Add X to all results
       (/ X)     Set a threshold of X (only results above X will be used)
+      (x X Y [...]) Remove all X, Y, etc... from the results
       - Debug -
       (s)       Show the list of dice results at this point of the functions
 """
@@ -64,6 +65,8 @@ def diceRoutine(text):
 		# Throw it
 		res=thrower.throw()
 		print txtdice,":", finalfn(res)
+		thrower.print_post_info()
+ 
 	#print command
 	if command[0]=="?": print help_text
 	if command[0]=="quit" or command[0]=="q": sys.exit()

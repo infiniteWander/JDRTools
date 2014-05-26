@@ -43,6 +43,7 @@ class Dice(object):
 		self.thrower=randint
 		self.finalfn=finalfn
 		self.results=[]
+		self.post_info={}
 	
 	def add_post_function(self,fnct):
 		"Add a function that will modify the global set of values"
@@ -69,6 +70,11 @@ class Dice(object):
 		for fn in self.post_functions:
 			fn(table)
 		return table
+		
+	def print_post_info(self):
+		for el in self.post_info:
+			print ">",el.capitalize(),self.post_info[el]
+	
 ##############
 # Function modifiers
 
@@ -84,26 +90,20 @@ def lower_than(dice,args):
 	dice.upper=min(dice.upper,val)
 	dice.rename("lower than "+args[0])
 
-def even(dice,args):
-	"The dice will only give even values"
-	dice.add_dice_function(lambda x: x%2)
-
-def odd(dice,args):
-	"The dice will only give odd values"
-	dice.add_dice_function(lambda x:x%2+1)
-
 def relaunch(dice,args):
 	if len(args)<2:
-		args.append(dice.sides+1) # Will relaunch everything under 0 (all)
+		args.append(dice.sides+1) # Will relaunch everything
 	args[0]=int(args[0])
 	args[1]=int(args[1])
-	
+	if "relaunch done" not in dice.post_info:
+		dice.post_info["relaunch done"]=0
 	def relaunch_fn(table):
 		for i in xrange(args[0]):
 			table.sort()
 			#print "Before",table
 			if table[0]<args[1]:
 				table[0]=dice.throw_one()
+				dice.post_info["relaunch done"]+=1
 			#print "After",table
 	dice.add_post_function(relaunch_fn)
 
@@ -134,19 +134,32 @@ def show_table(dice,arg):
 		print "("+dice.name+")",table, sum(table)
 	dice.add_post_function(show_fn)
 
+####
+# Table editing functions
+
+def filter_table(table,filtr):
+	size,i=len(table),0
+	while i < size:
+		if filtr(table[i]):
+			table.pop(i)
+			size-=1
+		else:
+			i+=1
+
 def threshold(dice,args):
 	th=int(args[0])
 	def threshold_fn(table):
-		size,i=len(table),0
-		while i < size:
-			if table[i]<th:
-				table.pop(i)
-				size-=1
-			else:
-				i+=1
-		#table=[i for i in table if i>=th]
+		filter_table(table,lambda x:x<th)
 	dice.add_post_function(threshold_fn)
-	
+
+def delete(dice,args):
+	def delete_fn(table):
+		for elt in args:
+			elt=int(elt)
+			filter_table(table,lambda x:x==elt)
+	dice.add_post_function(delete_fn)
+
+
 dictfn={">":upper_than,
 		"<":lower_than,
 		"*":relaunch,
@@ -154,7 +167,8 @@ dictfn={">":upper_than,
 		's':show_table,#Debug purpose
 		'++':add_to_all,
 		'+':add_to_sum,
-		'/':threshold}
+		'/':threshold,
+		'x':delete}
 
 def witch_fn(dice,fn,args):
 	try:
